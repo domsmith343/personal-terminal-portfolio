@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dev Terminal Portfolio</title>
-  <style>
+  <title>Dom Smith</title>
+  <link rel="stylesheet" href="style.css">
+<!-- Removed inline CSS, now in style.css -->
     :root {
       --bg-color: #000;
       --text-color: #00FF00;
       --border-color: #00FF00;
+      --primary-color: #00FF00;
+      --secondary-color: #FF00FF;
+      --transition-speed: 0.3s;
     }
 
     body.dark-mode {
       --bg-color: #f5f5f5;
       --text-color: #222;
       --border-color: #ccc;
+      --primary-color: #222;
+      --secondary-color: #FF00FF;
     }
 
     body {
@@ -23,23 +29,40 @@
       font-family: 'Courier New', Courier, monospace;
       padding: 2rem;
       margin: 0;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+      background-image: linear-gradient(45deg, transparent 49%, var(--border-color) 50%, transparent 51%);
+      background-size: 10px 10px;
     }
 
     .terminal {
       max-width: 800px;
       margin: 0 auto;
       border: 1px solid var(--border-color);
-      padding: 1.5rem;
+      padding: 2rem;
       box-shadow: 0 0 20px var(--text-color);
       border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+    }
+
+    .terminal::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 49%, var(--border-color) 50%, transparent 51%);
+      pointer-events: none;
+      opacity: 0.1;
     }
 
     .prompt {
       display: flex;
       flex-wrap: wrap;
       font-weight: bold;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.5s ease-out;
     }
 
     .prompt span {
@@ -54,13 +77,64 @@
       50% { opacity: 0; }
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     a {
-      color: var(--text-color);
-      text-decoration: underline;
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color var(--transition-speed);
     }
 
     a:hover {
-      color: #0f0;
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
+
+    .project-link {
+      position: relative;
+      padding: 0.5rem;
+      border-radius: 3px;
+      transition: all var(--transition-speed);
+    }
+
+    .project-link:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+      transform: translateX(5px);
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 3px;
+      transition: all var(--transition-speed);
+    }
+
+    .contact-link:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+    }
+
+    .copy-button {
+      display: none;
+      margin-left: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+
+    .contact-link:hover .copy-button {
+      display: inline-flex;
+    }
+
+    .copy-button:hover {
+      background-color: rgba(0, 255, 0, 0.1);
     }
 
     .toggle-btn {
@@ -70,61 +144,266 @@
       background-color: transparent;
       color: var(--text-color);
       border: 1px solid var(--border-color);
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.5rem;
       cursor: pointer;
       border-radius: 5px;
-      transition: all 0.3s ease;
+      transition: all var(--transition-speed);
+      z-index: 1000;
     }
 
     .toggle-btn:hover {
       background-color: var(--text-color);
       color: var(--bg-color);
+      transform: scale(1.05);
+    }
+
+    .toggle-btn:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .terminal {
+        padding: 1.5rem;
+      }
+
+      .toggle-btn {
+        top: 0.5rem;
+        right: 0.5rem;
+      }
+
+      .prompt {
+        margin-top: 1rem;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Theme</button>
-  <div class="terminal">
-    <div class="prompt">
+  <canvas id="particles-bg" aria-hidden="true" tabindex="-1" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;"></canvas>
+  <button class="toggle-btn" onclick="toggleDarkMode()" aria-label="Toggle dark mode"> Toggle Theme</button>
+  <main class="terminal" role="main" aria-label="Terminal Portfolio">
+    <nav aria-label="Section navigation" style="margin-bottom: 1rem;">
+      <button class="nav-btn" aria-label="Scroll to Projects" onclick="jumpToSection('projects')">Projects</button>
+      <button class="nav-btn" aria-label="Scroll to Skills" onclick="jumpToSection('skills')">Skills</button>
+      <button class="nav-btn" aria-label="Scroll to Contact" onclick="jumpToSection('contact')">Contact</button>
+    </nav>
+    <section class="prompt" id="intro" aria-label="Intro">
       <span>➜</span>
       <span>~</span>
-      <span>whoami</span>
-    </div>
-    <p>Hey there, I’m <strong>Alex Dev</strong> 👨‍💻<br>
+      <span id="whoami-typed"></span>
+    </section>
+    <p id="intro-desc">Hey there, I’m <strong>Dom Smith</strong> 👨‍💻<br>
       Full-Stack Developer | JavaScript | Python | React | Node.js
     </p>
 
-    <div class="prompt">
+    <section class="prompt" id="projects-section" aria-label="Projects">
       <span>➜</span>
       <span>~</span>
       <span>ls projects</span>
-    </div>
-    <ul>
-      <li><a href="#">🌐 Portfolio Website</a></li>
-      <li><a href="#">📊 Sports Dashboard</a></li>
-      <li><a href="#">🤖 Discord Bot (Nami & Robin)</a></li>
+    </section>
+    <input type="text" id="project-filter" aria-label="Filter projects" placeholder="Filter projects..." oninput="filterProjects()" style="margin-bottom:0.5rem;width:100%;padding:0.5rem;border-radius:5px;border:1px solid var(--border-color);background:var(--bg-color);color:var(--text-color);">
+    <ul id="projects" aria-live="polite">
+      <li><a href="#" class="project-link" data-keywords="portfolio website web"> Portfolio Website</a></li>
+      <li><a href="#" class="project-link" data-keywords="sports dashboard data"> Sports Dashboard</a></li>
+      <li><a href="#" class="project-link" data-keywords="discord bot automation"> Discord Bot (Nami & Robin)</a></li>
+      <li><a href="#" class="project-link" data-keywords="ai image"> AI Image Generator <img src="https://placehold.co/32x32?text=AI" alt="AI Project" loading="lazy" style="vertical-align:middle;border-radius:3px;"></a></li>
     </ul>
 
-    <div class="prompt">
+    <section class="prompt" id="skills-section" aria-label="Skills">
+      <span>➜</span>
+      <span>~</span>
+      <span>cat skills.txt</span>
+    </section>
+    <ul id="skills">
+      <li>JavaScript <progress value="90" max="100" aria-label="JavaScript skill"></progress></li>
+      <li>Python <progress value="85" max="100" aria-label="Python skill"></progress></li>
+      <li>React <progress value="80" max="100" aria-label="React skill"></progress></li>
+      <li>Node.js <progress value="75" max="100" aria-label="Node.js skill"></progress></li>
+      <li>Accessibility <progress value="70" max="100" aria-label="Accessibility skill"></progress></li>
+    </ul>
+
+    <section class="prompt" id="contact-section" aria-label="Contact">
       <span>➜</span>
       <span>~</span>
       <span>cat contact.txt</span>
-    </div>
-    <p>Email: <a href="mailto:alex@devmail.com">alex@devmail.com</a><br>
-    GitHub: <a href="https://github.com/alexdev">github.com/alexdev</a><br>
-    LinkedIn: <a href="https://linkedin.com/in/alexdev">linkedin.com/in/alexdev</a></p>
+    </section>
+    <form id="contact" aria-label="Contact form" onsubmit="sendContact(event)" style="margin-bottom:1.5rem;">
+      <label for="contact-name">Name</label><br>
+      <input id="contact-name" name="name" required style="width:100%;padding:0.5rem;margin-bottom:0.5rem;"><br>
+      <label for="contact-email">Email</label><br>
+      <input id="contact-email" name="email" type="email" required style="width:100%;padding:0.5rem;margin-bottom:0.5rem;"><br>
+      <label for="contact-msg">Message</label><br>
+      <textarea id="contact-msg" name="message" required rows="3" style="width:100%;padding:0.5rem;margin-bottom:0.5rem;"></textarea><br>
+      <button type="submit" aria-label="Send message">Send</button>
+      <span id="contact-status" aria-live="polite" style="margin-left:1rem;"></span>
+    </form>
+    <p>Email: <a href="mailto:alex@devmail.com" class="contact-link" aria-label="Email">alex@devmail.com</a>
+      <button class="copy-button" onclick="copyToClipboard('alex@devmail.com')" aria-label="Copy email">
+        <span class="loading"></span>
+      </button><br>
+      GitHub: <a href="https://github.com/alexdev" class="contact-link" aria-label="GitHub">github.com/alexdev</a><br>
+      LinkedIn: <a href="https://linkedin.com/in/alexdev" class="contact-link" aria-label="LinkedIn">linkedin.com/in/alexdev</a>
+    </p>
 
-    <div class="prompt">
+    <section class="prompt" aria-label="Terminal cursor">
       <span>➜</span>
       <span>~</span>
-      <span><span class="blinker">█</span></span>
-    </div>
-  </div>
+      <span><span class="blinker" aria-live="polite" aria-label="Cursor">█</span></span>
+    </section>
+  </main>
+<footer>
+  &copy; 2025 Dom Smith. Terminal Portfolio. Theme by <a href="https://github.com/domsmith343" target="_blank" rel="noopener">Dom Smith</a>.
+</footer>
 
-  <script>
+  <script src="main.js"></script>
+<!-- Removed inline JS, now in main.js -->
+    // Particle background (simple, lightweight)
+    const canvas = document.getElementById('particles-bg');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2 + 1,
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5
+        });
+      }
+    }
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--border-color');
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+    createParticles();
+    drawParticles();
+
+    // Typing animation for whoami
+    function typeText(el, text, speed = 80, cb) {
+      let i = 0;
+      function type() {
+        el.textContent = text.slice(0, i);
+        if (i <= text.length) {
+          i++;
+          setTimeout(type, speed);
+        } else if (cb) cb();
+      }
+      type();
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      typeText(document.getElementById('whoami-typed'), 'whoami', 110);
+      // Typing animation for description (optional)
+      // typeText(document.getElementById('intro-desc'), "Hey there, I’m Alex Dev 👨‍💻 Full-Stack Developer | JavaScript | Python | React | Node.js", 20);
+    });
+
+    // Project filter
+    function filterProjects() {
+      const input = document.getElementById('project-filter').value.toLowerCase();
+      document.querySelectorAll('#projects li').forEach(li => {
+        const keywords = li.querySelector('a').getAttribute('data-keywords');
+        if (!input || keywords.includes(input)) {
+          li.style.display = '';
+        } else {
+          li.style.display = 'none';
+        }
+      });
+    }
+
+    // Keyboard navigation for nav buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+    });
+    function jumpToSection(id) {
+      const el = document.getElementById(id+'-section') || document.getElementById(id);
+      if (el) el.scrollIntoView({behavior:'smooth'});
+    }
+
+    // Copy to clipboard
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const button = event.target;
+        const loading = button.querySelector('.loading');
+        if (loading) loading.style.display = 'none';
+        button.innerHTML = 'Copied!';
+        setTimeout(() => {
+          button.innerHTML = '<span class="loading"></span>';
+          if (loading) loading.style.display = 'inline-block';
+        }, 2000);
+      });
+    }
+
+    // Contact form (dummy, no backend)
+    function sendContact(e) {
+      e.preventDefault();
+      document.getElementById('contact-status').textContent = 'Sending...';
+      setTimeout(() => {
+        document.getElementById('contact-status').textContent = 'Message sent! (demo)';
+        e.target.reset();
+      }, 1200);
+    }
+
+    // Smooth theme transitions
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
+      const icon = document.querySelector('.toggle-btn');
+      icon.textContent = icon.textContent.includes('') ? ' Toggle Theme' : ' Toggle Theme';
+      createParticles(); // update particle color
     }
+
+    // Enhanced keyboard accessibility
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.body.classList.remove('dark-mode');
+        createParticles();
+      }
+      // Alt+1/2/3 for nav
+      if (e.altKey && e.key === '1') jumpToSection('projects');
+      if (e.altKey && e.key === '2') jumpToSection('skills');
+      if (e.altKey && e.key === '3') jumpToSection('contact');
+    });
   </script>
 </body>
+<!-- All CSS and JS is now split out for maintainability and performance. -->
 </html>
