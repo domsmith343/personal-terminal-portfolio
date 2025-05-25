@@ -1,4 +1,7 @@
 /* Terminal Portfolio Styles */
+html {
+  scroll-behavior: smooth;
+}
 :root {
   --bg-color: #000;
   --text-color: #00FF00;
