@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Terminal Portfolio</title>
+  <style>
+    :root {
+      --bg-color: #000;
+      --text-color: #00FF00;
+      --border-color: #00FF00;
+    }
+
+    body.dark-mode {
+      --bg-color: #f5f5f5;
+      --text-color: #222;
+      --border-color: #ccc;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Courier New', Courier, monospace;
+      padding: 2rem;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .terminal {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      box-shadow: 0 0 20px var(--text-color);
+      border-radius: 10px;
+    }
+
+    .prompt {
+      display: flex;
+      flex-wrap: wrap;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+
+    .prompt span {
+      margin-right: 0.5rem;
+    }
+
+    .blinker {
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    a {
+      color: var(--text-color);
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #0f0;
+    }
+
+    .toggle-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: transparent;
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-btn" onclick="toggleDarkMode()">Toggle Theme</button>
+  <div class="terminal">
+    <div class="prompt">
+      <span>➜</span>
+      <span>~</span>
+      <span>whoami</span>
+    </div>
+    <p>Hey there, I’m <strong>Alex Dev</strong> 👨‍💻<br>
+      Full-Stack Developer | JavaScript | Python | React | Node.js
+    </p>
+
+    <div class="prompt">
+      <span>➜</span>
+      <span>~</span>
+      <span>ls projects</span>
+    </div>
+    <ul>
+      <li><a href="#">🌐 Portfolio Website</a></li>
+      <li><a href="#">📊 Sports Dashboard</a></li>
+      <li><a href="#">🤖 Discord Bot (Nami & Robin)</a></li>
+    </ul>
+
+    <div class="prompt">
+      <span>➜</span>
+      <span>~</span>
+      <span>cat contact.txt</span>
+    </div>
+    <p>Email: <a href="mailto:alex@devmail.com">alex@devmail.com</a><br>
+    GitHub: <a href="https://github.com/alexdev">github.com/alexdev</a><br>
+    LinkedIn: <a href="https://linkedin.com/in/alexdev">linkedin.com/in/alexdev</a></p>
+
+    <div class="prompt">
+      <span>➜</span>
+      <span>~</span>
+      <span><span class="blinker">█</span></span>
+    </div>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
+</body>
+</html>
