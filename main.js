@@ -153,3 +153,105 @@ window.addEventListener('scroll', () => {
     backToTop.classList.remove('visible');
   }
 });
+
+// Command handling
+const commands = {
+  help: () => {
+    return `Available commands:
+    help    - Show this help message
+    about   - Learn more about me
+    projects - View my projects
+    clear   - Clear the terminal
+    exit    - Exit the terminal (just kidding, you can't!)`;
+  },
+  about: () => {
+    return `Hey there! I'm Dom Smith, a Full-Stack Developer passionate about creating 
+    innovative web solutions. I specialize in JavaScript, Python, React, and Node.js.
+    
+    I love building user-friendly applications and solving complex problems.
+    When I'm not coding, you can find me exploring new technologies and contributing
+    to open-source projects.`;
+  },
+  projects: () => {
+    return `Here are some of my projects:
+    1. Portfolio Website - This terminal-style portfolio
+    2. Sports Dashboard - Real-time sports data visualization
+    3. Discord Bot (Nami & Robin) - Automated Discord server management
+    4. AI Image Generator - AI-powered image creation tool`;
+  },
+  clear: () => {
+    document.getElementById('terminal-output').innerHTML = '';
+    return '';
+  }
+};
+
+let commandHistory = [];
+let historyIndex = -1;
+
+function handleCommand(command) {
+  const cmd = command.toLowerCase().trim();
+  const output = document.getElementById('terminal-output');
+  
+  // Add command to output
+  const commandElement = document.createElement('div');
+  commandElement.className = 'command-response';
+  commandElement.innerHTML = `<span style="color: var(--border-color)">➜</span> ${command}`;
+  output.appendChild(commandElement);
+
+  // Process command
+  let response = '';
+  if (commands[cmd]) {
+    response = commands[cmd]();
+  } else if (cmd === '') {
+    response = '';
+  } else {
+    response = `Command not found: ${cmd}. Type 'help' to see available commands.`;
+  }
+
+  // Add response to output
+  if (response) {
+    const responseElement = document.createElement('div');
+    responseElement.className = 'command-response';
+    responseElement.textContent = response;
+    output.appendChild(responseElement);
+  }
+
+  // Scroll to bottom
+  output.scrollTop = output.scrollHeight;
+  
+  // Add to history
+  if (cmd) {
+    commandHistory.push(cmd);
+    historyIndex = commandHistory.length;
+  }
+}
+
+// Command input handling
+document.addEventListener('DOMContentLoaded', function() {
+  const commandInput = document.getElementById('command');
+  
+  commandInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      handleCommand(this.value);
+      this.value = '';
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex--;
+        this.value = commandHistory[historyIndex];
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex < commandHistory.length - 1) {
+        historyIndex++;
+        this.value = commandHistory[historyIndex];
+      } else {
+        historyIndex = commandHistory.length;
+        this.value = '';
+      }
+    }
+  });
+
+  // Focus command input
+  commandInput.focus();
+});

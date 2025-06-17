@@ -226,3 +226,38 @@ footer {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+#command-input {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+#command {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  outline: none;
+  width: 100%;
+}
+
+#terminal-output {
+  margin: 1rem 0;
+  white-space: pre-wrap;
+}
+
+.command-response {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-left: 2px solid var(--border-color);
+}
+
+.command-error {
+  color: #ff6b6b;
+}
+
+.command-success {
+  color: #51cf66;
+}
