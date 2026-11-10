@@ -1,114 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Dom Smith's terminal-inspired portfolio. Full-Stack Developer: JavaScript, Python, React, Node.js.">
-  <meta name="keywords" content="Dom Smith, portfolio, developer, JavaScript, Python, React, Node.js, web developer">
-  <meta property="og:title" content="Dom Smith | Terminal Portfolio">
-  <meta property="og:description" content="Terminal-inspired portfolio for Dom Smith, Full-Stack Developer.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://your-portfolio-url.com/">
-  <meta property="og:image" content="https://your-portfolio-url.com/og-image.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Dom Smith | Terminal Portfolio">
-  <meta name="twitter:description" content="Terminal-inspired portfolio for Dom Smith, Full-Stack Developer.">
-  <meta name="twitter:image" content="https://your-portfolio-url.com/og-image.png">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <title>Dom Smith</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <noscript>
-    <div style="color: #fff; background: #222; padding: 1em; text-align: center;">
-      This site works best with JavaScript enabled.
-    </div>
-  </noscript>
-  <canvas id="particles-bg" aria-hidden="true" tabindex="-1" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;"></canvas>
-  <button class="toggle-btn" onclick="toggleDarkMode()" aria-label="Toggle dark mode"> Toggle Theme</button>
-  <main class="terminal" role="main" aria-label="Terminal Portfolio">
-    <nav aria-label="Section navigation" style="margin-bottom: 1rem;">
-      <button class="nav-btn" aria-label="Scroll to Projects" onclick="jumpToSection('projects')">Projects</button>
-      <button class="nav-btn" aria-label="Scroll to Skills" onclick="jumpToSection('skills')">Skills</button>
-      <button class="nav-btn" aria-label="Scroll to Contact" onclick="jumpToSection('contact')">Contact</button>
-    </nav>
-    <section class="prompt" id="intro" aria-label="Intro">
-      <span>➜</span>
-      <span>~</span>
-      <span id="whoami-typed"></span>
-    </section>
-    <p id="intro-desc">Hey there, I'm <strong>Dom Smith</strong> 👨🏾‍💻<br>
-      Full-Stack Developer | JavaScript | Python | React | Node.js<br>
-      Type 'help' to see available commands
-    </p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>dom@dev ~ Dom Smith</title>
+    <meta name="description" content="Dom Smith's terminal. Self-hosted AI, Discord bots, fantasy football tools and other things I build at home." />
+    <meta property="og:title" content="dom@dev ~ Dom Smith" />
+    <meta property="og:description" content="A terminal you can poke around in. Type help." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0b0f0c" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0f0c'/%3E%3Ctext x='5' y='22' font-family='monospace' font-size='16' font-weight='bold' fill='%2339ff88'%3E%3E_%3C/text%3E%3C/svg%3E" />
+    <!-- Apply the saved theme before first paint so the page never flashes the wrong colors -->
+    <script>
+      try { var t = localStorage.getItem("term-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="particles" aria-hidden="true"></canvas>
 
-    <div id="terminal-output"></div>
-    <section class="prompt" id="command-input" aria-label="Command input">
-      <span>➜</span>
-      <span>~</span>
-      <input type="text" id="command" autocomplete="off" spellcheck="false" aria-label="Enter command">
-    </section>
+    <main class="window" aria-label="Dom Smith's terminal">
+      <header class="titlebar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="title">dom@dev: ~</span>
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="Change theme">theme</button>
+      </header>
 
-    <section class="prompt" id="projects-section" aria-label="Projects">
-      <span>➜</span>
-      <span>~</span>
-      <span>ls projects</span>
-    </section>
-    <input type="text" id="project-filter" aria-label="Filter projects" placeholder="Filter projects..." oninput="filterProjects()" style="margin-bottom:0.5rem;width:100%;padding:0.5rem;border-radius:5px;border:1px solid var(--border-color);background:var(--bg-color);color:var(--text-color);">
-    <ul id="projects" aria-live="polite">
-      <li><a href="#" class="project-link" data-keywords="portfolio website web"> Portfolio Website</a></li>
-      <li><a href="#" class="project-link" data-keywords="sports dashboard data"> Sports Dashboard</a></li>
-      <li><a href="#" class="project-link" data-keywords="discord bot automation"> Discord Bot (Nami & Robin)</a></li>
-      <li><a href="#" class="project-link" data-keywords="ai image"> AI Image Generator <img src="https://placehold.co/32x32?text=AI" alt="AI Project" loading="lazy" style="vertical-align:middle;border-radius:3px;"></a></li>
-    </ul>
+      <div class="screen" id="screen">
+        <div id="output" role="log" aria-live="polite"></div>
+        <form class="prompt-line" id="promptForm" autocomplete="off">
+          <label for="cmd" class="ps1"><span class="user">dom@dev</span>:<span class="path">~</span>$</label>
+          <input id="cmd" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Type a command" />
+        </form>
+      </div>
 
-    <section class="prompt" id="skills-section" aria-label="Skills">
-      <span>➜</span>
-      <span>~</span>
-      <span>cat skills.txt</span>
-    </section>
-    <ul id="skills">
-      <li>JavaScript <progress value="90" max="100" aria-label="JavaScript skill"></progress></li>
-      <li>Python <progress value="85" max="100" aria-label="Python skill"></progress></li>
-      <li>React <progress value="80" max="100" aria-label="React skill"></progress></li>
-      <li>Node.js <progress value="75" max="100" aria-label="Node.js skill"></progress></li>
-      <li>Accessibility <progress value="70" max="100" aria-label="Accessibility skill"></progress></li>
-    </ul>
+      <nav class="chips" aria-label="Quick commands">
+        <button type="button" data-cmd="whoami">whoami</button>
+        <button type="button" data-cmd="ls projects">ls projects</button>
+        <button type="button" data-cmd="cat about.txt">about</button>
+        <button type="button" data-cmd="neofetch">neofetch</button>
+        <button type="button" data-cmd="contact">contact</button>
+        <button type="button" data-cmd="help">help</button>
+      </nav>
 
-    <section class="prompt" id="contact-section" aria-label="Contact">
-      <span>➜</span>
-      <span>~</span>
-      <span>cat contact.txt</span>
-    </section>
-    <form id="contact" aria-label="Contact form" onsubmit="sendContact(event)" style="margin-bottom:1.5rem;">
-      <label for="contact-name">Name</label><br>
-      <input id="contact-name" name="name" required style="width:100%;padding:0.5rem;margin-bottom:0.5rem;"><br>
-      <label for="contact-email">Email</label><br>
-      <input id="contact-email" name="email" type="email" required style="width:100%;padding:0.5rem;margin-bottom:0.5rem;"><br>
-      <label for="contact-msg">Message</label><br>
-      <textarea id="contact-msg" name="message" required rows="3" style="width:100%;padding:0.5rem;margin-bottom:0.5rem;"></textarea><br>
-      <button type="submit" aria-label="Send message">Send</button>
-      <span id="contact-status" aria-live="polite" style="margin-left:1rem;"></span>
-    </form>
-    <p>Email: <a href="mailto:domsmith343@gmail.com" class="contact-link" aria-label="Email">domsmith343@gmail.com</a>
-      <button class="copy-button" onclick="copyToClipboard('domsmith343@gmail.com')" aria-label="Copy email">
-        <span class="loading"></span>
-      </button><br>
-      GitHub: <a href="https://github.com/domsmith343" class="contact-link" aria-label="GitHub">github.com/domsmith343</a><br>
-      LinkedIn: <a href="https://linkedin.com/in/domsmith343" class="contact-link" aria-label="LinkedIn">linkedin.com/in/domsmith343</a>
-    </p>
+      <!-- Shown only without JavaScript, so the page still says who I am and how to reach me -->
+      <noscript>
+        <div class="fallback">
+          <p><strong>Dom Smith</strong>, IT support analyst in Los Angeles who builds things at home.</p>
+          <p>Projects: a self-hosted AI setup (Ollama, Open WebUI, Tailscale), Robin and Nami (two Discord bots running in Docker on a Mac mini), and Fantasy Command Center (a dashboard for my six ESPN fantasy football teams).</p>
+          <p>
+            <a href="mailto:domsmith343@gmail.com">Email</a> ·
+            <a href="https://github.com/domsmith343">GitHub</a> ·
+            <a href="https://www.linkedin.com/in/dominicsmith343/">LinkedIn</a>
+          </p>
+        </div>
+      </noscript>
+    </main>
 
-    <section class="prompt" aria-label="Terminal cursor">
-      <span>➜</span>
-      <span>~</span>
-      <span><span class="blinker" aria-live="polite" aria-label="Cursor">█</span></span>
-    </section>
-  </main>
-<footer>
-  &copy; 2025 Dom Smith. Terminal Portfolio. Theme by <a href="https://github.com/domsmith343" target="_blank" rel="noopener">Dom Smith</a>.
-</footer>
+    <footer>© 2026 Dom Smith · built by hand, no frameworks</footer>
 
-  <script src="main.js"></script>
-</body>
-<!-- All CSS and JS is now split out for maintainability and performance. -->
+    <script src="main.js"></script>
+  </body>
 </html>
